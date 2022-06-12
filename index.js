@@ -1,6 +1,8 @@
 const fs = require("fs").promises;
 const config = require("./config.json");
 const axios = require('axios');
+const {createChecker} = require('is-in-subnet');
+const checker = createChecker(config.subnet);
 
 async function ReadUpload(){
     //Read and upload file
@@ -12,23 +14,20 @@ async function ReadUpload(){
         for(let _data of data){
             if(_data.includes("\t")){
                 let splitData = _data.split("\t");
-                let timestamp = Number(splitData[0]);
-                let ip = splitData[1];
-                hosts.push({
-                    time: timestamp,
-                    host: ip
-                })
+                let ip_source = splitData[2];
+                let ip_dest = splitData[4];
+                if(checker(ip_source) && !hosts.includes(ip_source)){
+                    hosts.push(ip_source);
+                }
+                if(checker(ip_dest) && !hosts.includes(ip_dest)){
+                    hosts.push(ip_dest);
+                }
             }
         }
         let response = await axios.post(config.url,hosts);
-        if(response.status === 204){
-            return true;
-        } else {
-            return false;
-        }
-        return false;
+        return response.status === 204;
     }catch(error){
-        console.log(error);
+        console.log(error.message);
         return false;
     }
 }

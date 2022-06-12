@@ -1,6 +1,9 @@
 {
-  "interval_minutes": 10,
-  "file_path" : "./known_hosts.log",
-  "url" : "http://127.0.0.1:3000/api/hosts",
-  "scan_on_restart": true
+  "interval_minutes": 5,
+  "file_path" : "/opt/zeek/logs/current/conn.log",
+  "url" : "http://192.168.100.5:3000/api/hosts",
+  "scan_on_restart": true,
+  "subnet" : [
+    "192.168.100.0/24"
+  ]
 }
